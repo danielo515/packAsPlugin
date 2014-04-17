@@ -48,8 +48,8 @@ Compute the internal state of the widget
 packAsPlugin.prototype.execute = function () {
     // Get attributes
      this.pluginDependencies=this.getAttribute("dependencies");
-       this.pluginDescription=this.getAttribute("description","plugin packed with Danielo's pack plugin");
-     this.pluginType=this.getAttribute("type","plugin");
+       this.pluginDescription=this.getAttribute("description") || "plugin packed with Danielo's pack plugin";
+     this.pluginType=this.getAttribute("type") || "plugin";
       this.pluginVersion=this.getAttribute("version");
 
       this.pluginAuthor=this.getAttribute("author",$tw.wiki.getTiddlerText("$:/status/UserName") || "Danielo" );
@@ -58,6 +58,8 @@ packAsPlugin.prototype.execute = function () {
      this.tiddlersFilter=this.getAttribute("filter","[!is[system]!is[shadow]!has[draft.of]]");
     // Construct the child widgets
     console.log("Execute: "+this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
+	this.makeChildWidgets();
+
 };
 
 /*
@@ -65,9 +67,10 @@ Selectively refreshes the widget if needed. Returns true if the widget or any of
 */
 packAsPlugin.prototype.refresh = function (changedTiddlers) {
     var changedAttributes = this.computeAttributes();
-    console.log(this.computeAttributes());
-    if(changedAttributes.tiddler || changedAttributes.name || changedAttributes.description || changedAttributes.author) {
-        this.refreshSelf(); //looks this function call the execute function again
+    if(changedAttributes.tiddler || changedAttributes.name || changedAttributes.description ||
+       changedAttributes.author || changedAttributes.filter || changedAttributes.type || changedAttributes.description) {
+        this.refreshSelf(); //looks this function call the execute function again.
+                            //Because this you can see the log of the execute function and then this one below.
             console.log("refresh: "+this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
 
         return true;
