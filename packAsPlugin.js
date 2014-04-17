@@ -57,7 +57,7 @@ packAsPlugin.prototype.execute = function () {
 
      this.tiddlersFilter=this.getAttribute("filter","[!is[system]!is[shadow]!has[draft.of]]");
     // Construct the child widgets
-    console.log(this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
+    console.log("Execute: "+this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
 };
 
 /*
@@ -67,8 +67,8 @@ packAsPlugin.prototype.refresh = function (changedTiddlers) {
     var changedAttributes = this.computeAttributes();
     console.log(this.computeAttributes());
     if(changedAttributes.tiddler || changedAttributes.name || changedAttributes.description || changedAttributes.author) {
-        this.refreshSelf();
-            console.log(this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
+        this.refreshSelf(); //looks this function call the execute function again
+            console.log("refresh: "+this.pluginAuthor+"-Name:"+this.pluginName+"-filter:"+this.tiddlersFilter);
 
         return true;
     } else {
