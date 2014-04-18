@@ -3,10 +3,12 @@ title: $:/plugins/danielo/packAsPlugin/packAsPlugin.js
 type: application/javascript
 module-type: widget
 
-encrypttiddler widget
+Pack plugin  widget
 
 ```
-
+This widgets makes easier to pack the different 
+Tiddlers that composes a plugin.
+This way you don't have to take care of the naming convention or remember how mmany fields you have to define. 
 ```
 
 
