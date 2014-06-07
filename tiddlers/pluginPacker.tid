@@ -1,0 +1,89 @@
+created: 20140415181112002
+creator: Danielo
+modified: 20140607142918377
+modifier: danielo
+systemfilter: !is[system]
+title: pluginPacker
+type: text/vnd.tiddlywiki
+
+\define tag-styles()
+background-color:$(backgroundColor)$;
+\end
+
+\define tag-filter() [![$:/temp/search]!has[draft.of]!is[current]$(systemFilter)$$(shadowFilter)$$(searchFilter)$$(tagNames)$sort[title]]
+
+\define show-system()
+<small><div> <em> System:</em> <$radio field="systemfilter" value="">  Show </$radio> <$radio field="systemfilter" value="!is[system]"> Hide </$radio></div></small>
+\end
+
+!!Plugin information
+@@text-align:right;
+<table border="0" cellpadding="0" cellspacing="0" style="border:solid transparent"><tr><td>
+''Name: ''<$edit-text tiddler="$:/tempPlugin" tag="input" field="pluginname" placeholder="Plugin name"/><br>
+''Author:'' <$edit-text tiddler="$:/tempPlugin" tag="input" field="pluginauthor" default={{$:/status/UserName}} placeholder={{$:/status/UserName}}/><br>
+''Version:'' <$edit-text tiddler="$:/tempPlugin" tag="input" field="pluginversion" placeholder="version (automatic)"/><br>
+</td>
+<td>
+''Dependencies:'' <$edit-text tiddler="$:/tempPlugin" tag="input" field="plugindep" placeholder="dependencies"/><br>
+''Description:'' <$edit-text tiddler="$:/tempPlugin" tag="input" field="plugindesc" placeholder="description"/><br>
+''Type:'' <$edit-text tiddler="$:/tempPlugin" tag="input" field="plugintype" placeholder="type" default="plugin"/><br>
+</td></tr>
+</table>
+@@
+
+Filter for included tiddlers: <$edit-text tiddler="$:/tempPluginFilter" tag="input"  placeholder="dependencies"/> <$button set="$:/tempPluginFilter" setTo="[list[$:/StoryList]]-[is[current]]">Use Open</$button>
+
+
+
+<div class="tw-search"><$edit-text tiddler="$:/temp/search" type="search" tag="input"/> <$reveal state="$:/temp/search" type="nomatch" text=""><$linkcatcher to="$:/temp/search"><$link to="" class="btn-invisible">{{$:/core/images/close-button}}</$link></$linkcatcher></$reveal><$reveal state="$:/temp/search" type="match" text=""> &nbsp;<$link to="$:/AdvancedSearch" class="btn-invisible">&hellip;</$link></$reveal></div>
+<$fieldmangler tiddler="$:/temp/search">
+<div class="tw-edit-add-tag">
+<span class="tw-add-tag-name">
+<$edit-text tiddler="$:/temp/NewTagName" tag="input" default="" placeholder={{$:/language/EditTemplate/Tags/Add/Placeholder}} focusPopup=<<qualify "$:/state/tagsAutoComplete">> class="tw-edit-texteditor"/>
+</span><span class="tw-add-tag-button">
+<$button message="tw-add-tag" param={{$:/temp/NewTagName}} set="$:/temp/NewTagName" setTo="" class="btn-invisible">
+{{$:/core/images/new-button}}</$button>
+</span>
+</div>
+
+<div class="tw-block-dropdown-wrapper">
+<$reveal state=<<qualify "$:/state/tagsAutoComplete">> type="nomatch" text="" default="">
+<div class="tw-block-dropdown">
+<$linkcatcher set="$:/temp/NewTagName" setTo="" message="tw-add-tag">
+<$list filter="[!is[shadow]tags[]search{$:/temp/NewTagName}sort[title]]-[[$:/temp/search]tags[]]">
+<$link>
+<$set name="backgroundColor" value={{!!color}}>
+<span style=<<tag-styles>> class="tw-tag-label">
+<$view field="title" format="text"/>
+</span>
+</$set>
+</$link>
+</$list>
+</$linkcatcher>
+</div>
+</$reveal>
+</div>
+<$list filter="[[$:/temp/search]tags[]sort[title]]" storyview="pop"><$set name="backgroundColor" value={{!!color}}><span style=<<tag-styles>> class="tw-tag-label">
+<$view field="title" format="text" />
+<$button message="tw-remove-tag" param={{!!title}} class="btn-invisible tw-remove-tag-button">&times;</$button></span>
+</$set>
+</$list>
+</$fieldmangler>
+ <div style="display:inline;"><<show-system>></div>
+<$set name="searchFilter" value=<<search-filter "$:/temp/search">> >
+<$set name="tagNames" value=<<extractTagsAsFilter "$:/temp/search">> >
+<$set name="systemFilter" value={{!!systemfilter}}>
+Tiddlers to be included in the plugin:
+<$list filter=<<tag-filter>>>
+
+</$list>
+
+
+
+<$packPlugin name={{$:/tempPlugin!!pluginname}} dependencies={{$:/tempPlugin!!plugindep}} filter=<<tag-filter>>  description={{$:/tempPlugin!!plugindesc}} type={{$:/tempPlugin!!plugintype}} author={{$:/tempPlugin!!pluginauthor}}>
+
+
+<$button message="tw-pack-plugin">pack</$button>
+
+</$packPlugin>
+</$set></$set></$set>

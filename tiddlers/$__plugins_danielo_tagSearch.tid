@@ -1,0 +1,42 @@
+created: 20140415013756833
+creator: Danielo
+description: A search box that allows you to filter by tag
+modified: 20140415014050144
+modifier: Danielo
+plugin-type: plugin
+title: $:/plugins/danielo/tagSearch
+type: application/json
+version: 0.0.3
+
+{
+    "tiddlers": {
+        "TagsSearch": {
+            "created": "20140414160743883",
+            "text": "\\define tag-styles()\nbackground-color:$(backgroundColor)$;\n\\end\n\n\\define tag-filter() [![$:/temp/search]!has[draft.of]!is[current]$(systemFilter)$$(shadowFilter)$$(searchFilter)$$(tagNames)$sort[title]]\n\n\\define show-system()\n<small><div> <em> System:</em> <$radio field=\"systemfilter\" value=\"\">  Show </$radio> <$radio field=\"systemfilter\" value=\"!is[system]\"> Hide </$radio></div></small>\n\\end\n\n\\define show-shadow()\n<small><div> <em> Shadow:</em> <$radio field=\"shadowfilter\" value=\"is[shadow]\">  Show </$radio> <$radio field=\"shadowfilter\" value=\"!is[shadow]\"> Hide </$radio></div></small>\n\\end\n\n<div class=\"tw-search\"><$edit-text tiddler=\"$:/temp/search\" type=\"search\" tag=\"input\"/> <$reveal state=\"$:/temp/search\" type=\"nomatch\" text=\"\"><$linkcatcher to=\"$:/temp/search\"><$link to=\"\" class=\"btn-invisible\">{{$:/core/images/close-button}}</$link></$linkcatcher></$reveal><$reveal state=\"$:/temp/search\" type=\"match\" text=\"\"> &nbsp;<$link to=\"$:/AdvancedSearch\" class=\"btn-invisible\">&hellip;</$link></$reveal></div>\n<$fieldmangler tiddler=\"$:/temp/search\">\n<div class=\"tw-edit-add-tag\">\n<span class=\"tw-add-tag-name\">\n<$edit-text tiddler=\"$:/temp/NewTagName\" tag=\"input\" default=\"\" placeholder={{$:/language/EditTemplate/Tags/Add/Placeholder}} focusPopup=<<qualify \"$:/state/tagsAutoComplete\">> class=\"tw-edit-texteditor\"/>\n</span><span class=\"tw-add-tag-button\">\n<$button message=\"tw-add-tag\" param={{$:/temp/NewTagName}} set=\"$:/temp/NewTagName\" setTo=\"\" class=\"btn-invisible\">\n{{$:/core/images/new-button}}</$button>\n</span>\n</div>\n\n<div class=\"tw-block-dropdown-wrapper\">\n<$reveal state=<<qualify \"$:/state/tagsAutoComplete\">> type=\"nomatch\" text=\"\" default=\"\">\n<div class=\"tw-block-dropdown\">\n<$linkcatcher set=\"$:/temp/NewTagName\" setTo=\"\" message=\"tw-add-tag\">\n<$list filter=\"[!is[shadow]tags[]search{$:/temp/NewTagName}sort[title]]-[[$:/temp/search]tags[]]\">\n<$link>\n<$set name=\"backgroundColor\" value={{!!color}}>\n<span style=<<tag-styles>> class=\"tw-tag-label\">\n<$view field=\"title\" format=\"text\"/>\n</span>\n</$set>\n</$link>\n</$list>\n</$linkcatcher>\n</div>\n</$reveal>\n</div>\n<$list filter=\"[[$:/temp/search]tags[]sort[title]]\" storyview=\"pop\"><$set name=\"backgroundColor\" value={{!!color}}><span style=<<tag-styles>> class=\"tw-tag-label\">\n<$view field=\"title\" format=\"text\" />\n<$button message=\"tw-remove-tag\" param={{!!title}} class=\"btn-invisible tw-remove-tag-button\">&times;</$button></span>\n</$set>\n</$list>\n</$fieldmangler>\n <div style=\"display:inline;\"><<show-system>></div>\n<$set name=\"searchFilter\" value=<<search-filter \"$:/temp/search\">> >\n<$set name=\"tagNames\" value=<<extractTagsAsFilter \"$:/temp/search\">> >\n<$set name=\"systemFilter\" value={{!!systemfilter}}>\n<$list filter=<<tag-filter>>>\n\n</$list>\n</$set></$set></$set>\n\n",
+            "title": "TagsSearch",
+            "systemfilter": "!is[system]",
+            "modified": "20140415014822624",
+            "tags": "$:/tags/AdvancedSearch"
+        },
+        "$:/plugins/danielo/tagSearch/extractTagsAsFilter.js": {
+            "created": "20140110061443770",
+            "text": "/*\\\ntitle: $:/macros/danielo/extractTagsAsFilter.js\ntype: application/javascript\nmodule-type: macro\n\n\\*/\n(function(){\n\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\n/*\nInformation about this macro\nThis is developed to .\n*/\n\nexports.name = \"extractTagsAsFilter\";\n\nexports.params = [\n\t{ name: \"tiddlerName\" }\n];\n\n/*\nRun the macro\n*/\nexports.run = function(tiddlerName) {\n   var tiddler=$tw.wiki.getTiddler(tiddlerName);\n    var result=\"\";\n    if(tiddler && tiddler.fields.tags)\n    {\n        var tags=tiddler.fields.tags;\n        for(var i=0; i<tags.length; i++)\n            result+=\"tag[\"+tags[i]+\"]\";\n    }\n\nreturn result;\n}\n\n})();",
+            "type": "application/javascript",
+            "title": "$:/plugins/danielo/tagSearch/extractTagsAsFilter.js",
+            "tags": "macros",
+            "module-type": "macro",
+            "modifier": "Danielo",
+            "modified": "20140415014136920",
+            "creator": "Stephan Hradek"
+        },
+        "$:/plugins/danielo/tagSearch/SearchFilter": {
+            "created": "20140414232747021",
+            "text": "/*\\\ntitle: $:/macros/danielo/SearchFilter.js\ntype: application/javascript\nmodule-type: macro\n\n\\*/\n(function(){\n\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\n/*\nInformation about this macro\nThis returns an empty search string if tiddlerName is empty. This avoids all tiddlers as result when using an empty as search string. \n*/\n\nexports.name = \"search-filter\";\n\nexports.params = [\n\t{ name: \"tiddlerName\" }\n];\n\n/*\nRun the macro\n*/\nexports.run = function(tiddlerName) {\n   var tiddler=$tw.wiki.getTiddler(tiddlerName);\n    var result=\"search{}\"; //by default,empty search\n    if(tiddler && tiddler.fields.text.trim().length>0 || tiddler.fields.tags)\n    {\n            result=\"search{\"+tiddlerName+\"}\";\n    }\n\nreturn result;\n}\n\n})();",
+            "type": "application/javascript",
+            "title": "$:/plugins/danielo/tagSearch/SearchFilter",
+            "tags": "macros",
+            "module-type": "macro",
+            "modified": "20140415014203477"
+        }
+    }
+}
